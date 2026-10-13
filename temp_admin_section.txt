@@ -1,0 +1,85 @@
+﻿}
+export function Admin() {
+  return (
+    <>
+      <PageTitle
+        title="Administration"
+        subtitle="Manage access carefully and keep the learning environment safe."
+      />
+      <div className="notice warning">
+        <LockKeyhole size={18} />
+        <span>
+          <b>Admin-only operations.</b> User creation and role changes must be
+          performed by a trusted server-side function. Never expose the Supabase
+          service-role key in the frontend.
+        </span>
+      </div>
+      <div className="stats-grid">
+        <Stat
+          icon={Users}
+          label="Registered accounts"
+          value="â€”"
+          detail="Connect Supabase to view users"
+        />
+        <Stat
+          icon={ShieldCheck}
+          label="Moderators"
+          value="â€”"
+          detail="Role-protected access"
+        />
+        <Stat
+          icon={Trophy}
+          label="Active sessions"
+          value="â€”"
+          detail="Scheduled quiz windows"
+        />
+        <Stat
+          icon={History}
+          label="Audit events"
+          value="â€”"
+          detail="Sensitive actions only"
+        />
+      <div className="panel">
+        <div className="panel-header">
+          <div>
+            <div className="eyebrow">ACCOUNT SAFETY</div>
+            <h3>User administration</h3>
+          </div>
+        </div>
+        <div className="user-table">
+          <div className="table-header">
+            <span>Username</span>
+            <span>Display Name</span>
+            <span>Role</span>
+            <span>Status</span>
+          </div>
+          {adminProfiles.length === 0 ? (
+            <div className="empty-state">
+              <div className="empty-icon">
+                <Users size={24} />
+              </div>
+              <p>No users found. The database is empty.</p>
+            </div>
+          ) : (
+            adminProfiles.map((user) => (
+              <div key={user.id} className="table-row">
+                <span>{user.username || 'â€”'}</span>
+                <span>{user.display_name || 'â€”'}</span>
+                <span>
+                  <span className={`status-pill ${user.role === 'admin' ? 'positive' : user.role === 'moderator' ? 'warning' : 'muted'}`}>
+                    {user.role || 'student'}
+                  </span>
+                </span>
+                <span>
+                  <span className={`status-pill ${user.email_confirmed ? 'positive' : 'warning'}`}>
+                    {user.email_confirmed ? 'Active' : 'Unconfirmed'}
+                  </span>
+                </span>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    </>
+  );
+}
