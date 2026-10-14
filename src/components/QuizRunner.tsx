@@ -11,6 +11,8 @@ import {
   submitQuiz,
 } from '../lib/api';
 import type { Language } from '../lib/i18n';
+import { t, ui } from '../lib/i18n';
+import BilingualText from './BilingualText';
 
 interface Props {
   quiz: Quiz;
@@ -52,7 +54,7 @@ export default function QuizRunner({
             sessionId ?? null
           );
           if (startErr || !started) {
-            throw new Error(startErr || 'Failed to start quiz attempt.');
+            throw new Error(startErr || ui(lang, 'Failed to start quiz attempt.', 'ප්‍රශ්නාවලි උත්සාහය ආරම්භ කළ නොහැක.'));
           }
           activeAttempt = started;
           if (alive) setAttempt(started);
@@ -69,7 +71,7 @@ export default function QuizRunner({
         setLoading(false);
       } catch (err: any) {
         if (!alive) return;
-        setError(err.message || 'Could not load quiz questions.');
+        setError(err.message || ui(lang, 'Could not load quiz questions.', 'ප්‍රශ්නාවලි ප්‍රශ්න පූරණය කළ නොහැක.'));
         setLoading(false);
       }
     }
@@ -117,7 +119,7 @@ export default function QuizRunner({
     setIsSubmitting(false);
 
     if (submitErr) {
-      alert(`Submission error: ${submitErr}`);
+      alert(`${ui(lang, 'Submission error', 'යොමු කිරීමේ දෝෂය')}: ${submitErr}`);
       return;
     }
 
@@ -136,7 +138,7 @@ export default function QuizRunner({
     return (
       <div className="quiz-runner-loading">
         <span className="loading-atom">✦</span>
-        <p>Loading quiz questions…</p>
+        <p>{t(lang, 'loadingQuestions')}</p>
       </div>
     );
   }
@@ -145,29 +147,29 @@ export default function QuizRunner({
     return (
       <div className="panel quiz-runner-error">
         <AlertTriangle size={32} />
-        <h3>Cannot start quiz</h3>
-        <p>{error || 'This quiz currently has no questions linked.'}</p>
+        <h3>{t(lang, 'cannotStart')}</h3>
+        <p>{error || ui(lang, 'This quiz currently has no questions linked.', 'මෙම ප්‍රශ්නාවලියට තවමත් ප්‍රශ්න සම්බන්ධ කර නැත.')}</p>
         <button className="primary-button" onClick={onCancel}>
-          Return to Quizzes
+          {t(lang, 'returnQuizzes')}
         </button>
       </div>
     );
   }
 
   const currentQ = questions[currentIndex];
-  const title = quiz.title_si || 'ප්‍රශ්නාවලිය';
-  const prompt = currentQ.prompt_si || 'මෙම ප්‍රශ්නය සඳහා සිංහල අන්තර්ගතය නොමැත.';
+  const title = <BilingualText en={quiz.title_en} si={quiz.title_si} />;
+  const prompt = <BilingualText en={currentQ.prompt_en} si={currentQ.prompt_si} className="question-content" />;
   const totalCount = questions.length;
   const answeredCount = Object.keys(selectedAnswers).length;
   return (
     <div className="quiz-runner">
       <div className="runner-header">
         <div className="runner-title-group">
-          <button className="icon-button close-runner-btn" onClick={onCancel} title="Exit quiz">
+          <button className="icon-button close-runner-btn" onClick={onCancel} title={t(lang, 'exitQuiz')}>
             <X size={18} />
           </button>
           <div>
-            <span className="eyebrow">{quiz.quiz_type.toUpperCase()} CHALLENGE</span>
+            <span className="eyebrow">{quiz.quiz_type.toUpperCase()} {t(lang, 'challenge')}</span>
             <h3>{title}</h3>
           </div>
         </div>
@@ -181,7 +183,7 @@ export default function QuizRunner({
           )}
           <div className="progress-badge">
             <CheckCircle2 size={16} />
-            <span>{answeredCount} / {totalCount} answered</span>
+            <span>{answeredCount} / {totalCount} {t(lang, 'answered')}</span>
           </div>
           <button
             className="primary-button submit-quiz-btn"
@@ -189,7 +191,7 @@ export default function QuizRunner({
             disabled={isSubmitting}
           >
             <Send size={15} />
-            <span>Submit Quiz</span>
+            <span>{t(lang, 'submitQuiz')}</span>
           </button>
         </div>
       </div>
@@ -203,7 +205,7 @@ export default function QuizRunner({
               key={q.quiz_question_id}
               className={`nav-dot-btn ${isCurrent ? 'current' : ''} ${isAnswered ? 'answered' : ''}`}
               onClick={() => setCurrentIndex(idx)}
-              title={`Question ${idx + 1}`}
+              title={`${t(lang, 'question')} ${idx + 1}`}
             >
               {idx + 1}
             </button>
@@ -213,9 +215,9 @@ export default function QuizRunner({
 
       <div className="panel question-panel">
         <div className="question-panel-top">
-          <span className="tag tag-blue">ප්‍රශ්නය {currentIndex + 1} / {totalCount}</span>
+          <span className="tag tag-blue">{t(lang, 'question')} {currentIndex + 1} / {totalCount}</span>
           <span className="tag tag-muted">{currentQ.topic}</span>
-          <span className="marks-badge">ලකුණු {currentQ.marks}</span>
+          <span className="marks-badge">{t(lang, 'marks')} {currentQ.marks}</span>
         </div>
 
         <div className="question-progress-track"><i style={{ width: `${((currentIndex + 1) / totalCount) * 100}%` }} /></div>
@@ -225,7 +227,7 @@ export default function QuizRunner({
         <div className="options-grid">
           {currentQ.options.map((opt) => {
             const isSelected = selectedAnswers[currentQ.quiz_question_id] === opt.id;
-            const optText = opt.text_si || 'සිංහල පිළිතුර නොමැත';
+            const optText = <BilingualText en={opt.text_en} si={opt.text_si} className="option-content" />;
 
             return (
               <button
@@ -246,7 +248,7 @@ export default function QuizRunner({
             disabled={currentIndex === 0}
             onClick={() => setCurrentIndex((c) => Math.max(0, c - 1))}
           >
-            <ChevronLeft size={16} /> Previous
+            <ChevronLeft size={16} /> {t(lang, 'previous')}
           </button>
 
           {currentIndex < totalCount - 1 ? (
@@ -254,14 +256,14 @@ export default function QuizRunner({
               className="primary-button"
               onClick={() => setCurrentIndex((c) => Math.min(totalCount - 1, c + 1))}
             >
-              Next <ChevronRight size={16} />
+              {t(lang, 'next')} <ChevronRight size={16} />
             </button>
           ) : (
             <button
               className="primary-button"
               onClick={() => setShowConfirm(true)}
             >
-              Finish & Review <Send size={16} />
+              {t(lang, 'finishReview')} <Send size={16} />
             </button>
           )}
         </div>
@@ -270,13 +272,13 @@ export default function QuizRunner({
       {showConfirm && (
         <div className="modal-backdrop">
           <div className="modal-content confirm-modal">
-            <h3>Ready to submit?</h3>
+            <h3>{t(lang, 'readySubmit')}</h3>
             <p>
-              You have answered <b>{answeredCount}</b> of <b>{totalCount}</b> questions.
-              {answeredCount < totalCount && ' You have unanswered questions.'}
+              {ui(lang, `You have answered ${answeredCount} of ${totalCount} questions.`, `ඔබ ප්‍රශ්න ${totalCount}කින් ${answeredCount}කට පිළිතුරු දී ඇත.`)}
+              {answeredCount < totalCount && ` ${t(lang, 'unanswered')}`}
             </p>
             <p className="confirm-note">
-              Once submitted, your answers will be graded and saved immediately.
+              {t(lang, 'savedImmediately')}
             </p>
             <div className="confirm-actions">
               <button
@@ -284,14 +286,14 @@ export default function QuizRunner({
                 onClick={() => setShowConfirm(false)}
                 disabled={isSubmitting}
               >
-                Continue Answering
+                {t(lang, 'continueAnswering')}
               </button>
               <button
                 className="primary-button"
                 onClick={handleFinalSubmit}
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Grading…' : 'Yes, Submit Now'}
+                {isSubmitting ? t(lang, 'grading') : t(lang, 'yesSubmit')}
               </button>
             </div>
           </div>

@@ -31,7 +31,7 @@ import {
   Check,
   X,
 } from "lucide-react";
-import { t, type Language } from "../lib/i18n";
+import { t, ui, type Language } from "../lib/i18n";
 import { isSupabaseConfigured } from "../lib/supabase";
 import {
   getDashboardStats,
@@ -63,6 +63,7 @@ import AttemptReviewModal from "../components/AttemptReviewModal";
 import CreateQuizModal from "../components/CreateQuizModal";
 import CreateQuestionModal from "../components/CreateQuestionModal";
 import { QuizBuilderModal, EditQuizModal } from "../components/QuizBuilderModal";
+import BilingualText from "../components/BilingualText";
 
 
 
@@ -181,7 +182,7 @@ export function Dashboard({ lang }: { lang: Language }) {
   return (
     <>
       <PageTitle
-        eyebrow="YOUR COSMIC CLASSROOM"
+        eyebrow={ui(lang, 'YOUR COSMIC CLASSROOM', 'ඔබේ විශ්වීය පන්ති කාමරය')}
         title={`${t(lang, "welcomeBack")}, Astronomer!`}
         subtitle={t(lang, "welcome")}
         action={
@@ -193,19 +194,18 @@ export function Dashboard({ lang }: { lang: Language }) {
       <section className="hero-banner">
         <div className="hero-copy">
           <span className="hero-kicker">
-            <Sparkles size={14} /> YOUR NEXT DISCOVERY AWAITS
+            <Sparkles size={14} /> {ui(lang, 'YOUR NEXT DISCOVERY AWAITS', 'ඔබේ ඊළඟ සොයාගැනීම බලා සිටී')}
           </span>
           <h2>
-            Curiosity is your
+            {ui(lang, 'Curiosity is your', 'කුතුහලය ඔබේ')}
             <br />
-            <em>superpower.</em>
+            <em>{ui(lang, 'superpower.', 'බලවත් හැකියාවයි.')}</em>
           </h2>
           <p>
-            Build your astronomy skills one question at a time. Your next great
-            discovery starts here.
+            {ui(lang, 'Build your astronomy skills one question at a time. Your next great discovery starts here.', 'එක් ප්‍රශ්නයක් බැගින් ඔබේ තාරකා විද්‍යා කුසලතා වර්ධනය කරන්න. ඔබේ ඊළඟ සොයාගැනීම මෙතැනින් ආරම්භ වේ.')}
           </p>
           <Link className="primary-button" to="/quizzes">
-            Explore quizzes <ArrowUpRight size={17} />
+            {ui(lang, 'Explore quizzes', 'ප්‍රශ්නාවලි ගවේෂණය කරන්න')} <ArrowUpRight size={17} />
           </Link>
         </div>
         <div className="planet-scene">
@@ -220,9 +220,9 @@ export function Dashboard({ lang }: { lang: Language }) {
         </div>
         <div className="hero-bottom">
           <span>
-            <span className="live-dot" /> {dailyQuiz ? 'DAILY CHALLENGE IS READY' : 'NO DAILY CONTEST TODAY'}
+            <span className="live-dot" /> {dailyQuiz ? ui(lang, 'DAILY CHALLENGE IS READY', 'දෛනික අභියෝගය සූදානම්') : ui(lang, 'NO DAILY CONTEST TODAY', 'අද දෛනික තරගයක් නැත')}
           </span>
-          <span>{dailyQuiz ? `${Math.round((dailyQuiz.duration_seconds || 1800) / 60)} minutes timer` : 'Practice sets open 24/7'}</span>
+          <span>{dailyQuiz ? `${Math.round((dailyQuiz.duration_seconds || 1800) / 60)} ${ui(lang, 'minutes timer', 'මිනිත්තු කාල ගණකය')}` : ui(lang, 'Practice sets open 24/7', 'පුහුණු කට්ටල 24/7 විවෘතයි')}</span>
         </div>
       </section>
       <section className="stats-grid">
@@ -230,34 +230,34 @@ export function Dashboard({ lang }: { lang: Language }) {
           icon={Trophy}
           label={t(lang, "points")}
           value={stats ? stats.points.toLocaleString() : '0'}
-          detail="Leaderboard points"
-          trend={stats && stats.points > 0 ? "Active" : undefined}
+          detail={ui(lang, 'Leaderboard points', 'ලකුණු පුවරු ලකුණු')}
+          trend={stats && stats.points > 0 ? ui(lang, 'Active', 'සක්‍රිය') : undefined}
         />
         <Stat
           icon={Target}
           label={t(lang, "accuracy")}
           value={stats && stats.attempts_count > 0 ? `${stats.accuracy_percent}%` : '—'}
-          detail={stats ? `Across ${stats.attempts_count} completed attempts` : 'No attempts yet'}
+          detail={stats ? ui(lang, `Across ${stats.attempts_count} completed attempts`, `සම්පූර්ණ කළ උත්සාහ ${stats.attempts_count}ක්`) : ui(lang, 'No attempts yet', 'තවම උත්සාහ නැත')}
         />
         <Stat
           icon={Flame}
           label={t(lang, "active")}
-          value={stats ? `${stats.streak_days} days` : '0 days'}
-          detail="Keep your learning streak going"
+          value={stats ? `${stats.streak_days} ${ui(lang, 'days', 'දින')}` : `0 ${ui(lang, 'days', 'දින')}`}
+          detail={ui(lang, 'Keep your learning streak going', 'ඔබේ අධ්‍යයන අඛණ්ඩතාව පවත්වා ගන්න')}
         />
         <Stat
           icon={ChartNoAxesCombined}
           label={t(lang, "rank")}
           value={stats?.rank ? `#${stats.rank}` : '—'}
-          detail="Leaderboard ranking"
+          detail={ui(lang, 'Leaderboard ranking', 'ලකුණු පුවරු ශ්‍රේණිය')}
         />
       </section>
       <div className="content-grid dashboard-grid">
         <section className="panel">
           <div className="panel-header">
             <div>
-              <div className="eyebrow">READY WHEN YOU ARE</div>
-              <h3>Continue your journey</h3>
+              <div className="eyebrow">{ui(lang, 'READY WHEN YOU ARE', 'ඔබ සූදානම් වූ විට')}</div>
+              <h3>{ui(lang, 'Continue your journey', 'ඔබේ ගමන දිගටම කරගෙන යන්න')}</h3>
             </div>
             <Link to="/quizzes" className="text-link">
               {t(lang, "view")} <ChevronRight size={15} />
@@ -271,17 +271,17 @@ export function Dashboard({ lang }: { lang: Language }) {
               <div className="challenge-tags">
                 <span className="tag tag-blue">DAILY QUIZ</span>
                 <span className={`tag ${dailyQuiz ? 'tag-green' : 'tag-muted'}`}>
-                  {dailyQuiz ? 'AVAILABLE' : 'OFFLINE'}
+                  {dailyQuiz ? t(lang, 'available') : t(lang, 'offline')}
                 </span>
               </div>
-              <h4>{dailyQuiz ? (lang === 'si' && dailyQuiz.title_si ? dailyQuiz.title_si : dailyQuiz.title_en) : t(lang, "daily")}</h4>
-              <p>{dailyQuiz?.description_en || 'Explore celestial mechanics, stars, and our place in the Solar System.'}</p>
+              <h4>{dailyQuiz ? <BilingualText en={dailyQuiz.title_en} si={dailyQuiz.title_si} /> : t(lang, "daily")}</h4>
+              <p>{dailyQuiz ? <BilingualText en={dailyQuiz.description_en} si={dailyQuiz.description_si} /> : ui(lang, 'Explore celestial mechanics, stars, and our place in the Solar System.', 'ආකාශ යාන්ත්‍රණය, තරු සහ සූර්ය මණ්ඩලයේ අපගේ ස්ථානය ගවේෂණය කරන්න.')}</p>
               <div className="challenge-meta">
                 <span>
                   <Clock3 size={14} /> {dailyQuiz ? `${Math.round((dailyQuiz.duration_seconds || 1800) / 60)} min` : '30 min'}
                 </span>
                 <span>
-                  <Trophy size={14} /> Official points
+                  <Trophy size={14} /> {ui(lang, 'Official points', 'නිල ලකුණු')}
                 </span>
               </div>
             </div>
@@ -306,17 +306,17 @@ export function Dashboard({ lang }: { lang: Language }) {
             </div>
             <div className="challenge-main">
               <div className="challenge-tags">
-                <span className="tag tag-gold">WEEKEND CONTEST</span>
-                <span className="tag tag-muted">UPCOMING</span>
+                <span className="tag tag-gold">{ui(lang, 'WEEKEND CONTEST', 'සති අන්ත තරගය')}</span>
+              <span className="tag tag-muted">{t(lang, 'upcoming')}</span>
               </div>
-              <h4>{stats?.weekendQuiz ? (lang === 'si' ? stats.weekendQuiz.title_si : stats.weekendQuiz.title_en) : t(lang, "weekend")}</h4>
-              <p>{stats?.weekendQuiz?.description_en || 'No weekend contest is currently open.'}</p>
+              <h4>{stats?.weekendQuiz ? <BilingualText en={stats.weekendQuiz.title_en} si={stats.weekendQuiz.title_si} /> : t(lang, "weekend")}</h4>
+              <p>{stats?.weekendQuiz ? <BilingualText en={stats.weekendQuiz.description_en} si={stats.weekendQuiz.description_si} /> : ui(lang, 'No weekend contest is currently open.', 'දැනට විවෘත සති අන්ත තරගයක් නැත.')}</p>
               <div className="challenge-meta">
                 <span>
                   <Clock3 size={14} /> {stats?.weekendQuiz?.duration_seconds ? `${Math.round(stats.weekendQuiz.duration_seconds / 60)} min` : '—'}
                 </span>
                 <span>
-                  <CalendarDays size={14} /> See schedule
+                  <CalendarDays size={14} /> {ui(lang, 'See schedule', 'කාලසටහන බලන්න')}
                 </span>
               </div>
             </div>
@@ -328,7 +328,7 @@ export function Dashboard({ lang }: { lang: Language }) {
         <section className="panel progress-panel">
           <div className="panel-header">
             <div>
-              <div className="eyebrow">SMALL STEPS, BIG DISCOVERIES</div>
+              <div className="eyebrow">{ui(lang, 'SMALL STEPS, BIG DISCOVERIES', 'කුඩා පියවර, විශාල සොයාගැනීම්')}</div>
               <h3>{t(lang, "progress")}</h3>
             </div>
             <span className="sparkle-badge">
@@ -339,14 +339,14 @@ export function Dashboard({ lang }: { lang: Language }) {
             <div className="progress-ring">
               <div>
                 <b>{stats && stats.attempts_count > 0 ? `${stats.accuracy_percent}%` : '0%'}</b>
-                <small>overall</small>
+                <small>{ui(lang, 'overall', 'සමස්ත')}</small>
               </div>
             </div>
             <div>
-              <h4>{stats && stats.attempts_count > 0 ? "You're making progress!" : "Start your journey today!"}</h4>
-              <p>{stats && stats.attempts_count > 0 ? "Your consistency is building a strong astronomy foundation." : "Complete quizzes to build accuracy and climb the leaderboard."}</p>
+                <h4>{stats && stats.attempts_count > 0 ? ui(lang, "You're making progress!", 'ඔබ ප්‍රගතියක් ලබමින් සිටී!') : ui(lang, 'Start your journey today!', 'අද ඔබේ ගමන ආරම්භ කරන්න!')}</h4>
+              <p>{stats && stats.attempts_count > 0 ? ui(lang, 'Your consistency is building a strong astronomy foundation.', 'ඔබේ අඛණ්ඩතාව ශක්තිමත් තාරකා විද්‍යා පදනමක් ගොඩනඟයි.') : ui(lang, 'Complete quizzes to build accuracy and climb the leaderboard.', 'නිවැරදිභාවය වර්ධනය කර ලකුණු පුවරුවේ ඉහළ යාමට ප්‍රශ්නාවලි සම්පූර්ණ කරන්න.')}</p>
               <span className="progress-note">
-                <CircleCheck size={14} /> {stats?.attempts_count || 0} attempts completed
+                <CircleCheck size={14} /> {stats?.attempts_count || 0} {ui(lang, 'attempts completed', 'උත්සාහ සම්පූර්ණ කර ඇත')}
               </span>
             </div>
           </div>
@@ -360,29 +360,25 @@ export function Dashboard({ lang }: { lang: Language }) {
             </div>
           ))}
           <Link to="/practice" className="secondary-button full-width">
-            Practice a topic <ArrowUpRight size={16} />
+            {ui(lang, 'Practice a topic', 'මාතෘකාවක් පුහුණු වන්න')} <ArrowUpRight size={16} />
           </Link>
         </section>
       </div>
       <section className="panel recent-panel">
         <div className="panel-header">
           <div>
-            <div className="eyebrow">YOUR LEARNING TRAIL</div>
+            <div className="eyebrow">{ui(lang, 'YOUR LEARNING TRAIL', 'ඔබේ ඉගෙනුම් මාවත')}</div>
             <h3>{t(lang, "recent")}</h3>
           </div>
           <Link to="/attempts" className="text-link">
-            View history <ChevronRight size={15} />
+            {ui(lang, 'View history', 'ඉතිහාසය බලන්න')} <ChevronRight size={15} />
           </Link>
         </div>
         <div className="table-scroll">
           <table>
             <thead>
               <tr>
-                <th>QUIZ</th>
-                <th>TYPE</th>
-                <th>DATE</th>
-                <th>SCORE</th>
-                <th>ACCURACY</th>
+                <th>{t(lang, 'quiz')}</th><th>{t(lang, 'type')}</th><th>{t(lang, 'date')}</th><th>{t(lang, 'score')}</th><th>{t(lang, 'accuracy')}</th>
                 <th></th>
               </tr>
             </thead>
@@ -390,7 +386,7 @@ export function Dashboard({ lang }: { lang: Language }) {
               {recentAttempts.length === 0 ? (
                 <tr>
                   <td colSpan={6} style={{ textAlign: 'center', padding: '2rem' }}>
-                    No attempts recorded yet. Start a quiz above to begin your learning trail!
+                    {ui(lang, 'No attempts recorded yet. Start a quiz above to begin your learning trail!', 'තවමත් උත්සාහ සටහන් වී නැත. ඔබේ ඉගෙනුම් මාවත ආරම්භ කිරීමට ඉහත ප්‍රශ්නාවලියක් ආරම්භ කරන්න!')}
                   </td>
                 </tr>
               ) : (
@@ -405,7 +401,7 @@ export function Dashboard({ lang }: { lang: Language }) {
                             <Telescope size={17} />
                           )}
                         </span>
-                        <b>{a.quiz?.title_en || 'Quiz Attempt'}</b>
+                        <b>{a.quiz ? <BilingualText en={a.quiz.title_en} si={a.quiz.title_si} /> : t(lang, 'quiz')}</b>
                       </div>
                     </td>
                     <td>
@@ -429,7 +425,7 @@ export function Dashboard({ lang }: { lang: Language }) {
                       <button
                         className="row-arrow"
                         onClick={() => setReviewAttemptId(a.id)}
-                        title="Review answers"
+                        title={t(lang, 'reviewAnswers')}
                         style={{ background: 'none', border: 'none', cursor: 'pointer' }}
                       >
                         <ChevronRight size={17} />
@@ -499,15 +495,14 @@ export function Quizzes({ lang = 'en' }: { lang?: Language }) {
   return (
     <>
       <PageTitle
-        eyebrow="CHOOSE YOUR CHALLENGE"
-        title="Quiz Centre"
-        subtitle="Test what you know. Discover what you don't. Keep exploring."
+        eyebrow={t(lang, 'chooseChallenge')}
+        title={t(lang, 'quizzes')}
+        subtitle={t(lang, 'quizCentreSubtitle')}
       />
       <div className="notice">
         <LockKeyhole size={18} />
         <span>
-          <b>Fair play, always.</b> Your timer and score are managed securely by Supabase.
-          Only your first eligible daily/weekend submission earns leaderboard points.
+          <b>{t(lang, 'fairPlay')}</b> {t(lang, 'secureQuiz')}
         </span>
       </div>
       <div className="quiz-cards">
@@ -520,19 +515,19 @@ export function Quizzes({ lang = 'en' }: { lang?: Language }) {
           <div className="quiz-feature-body">
             <div className="challenge-tags">
               <span className={`tag ${dailyQuiz ? 'tag-green' : 'tag-muted'}`}>
-                {dailyQuiz ? 'AVAILABLE' : 'OFFLINE'}
+                {dailyQuiz ? t(lang, 'available') : t(lang, 'offline')}
               </span>
               <span className="tag tag-blue">
                 {dailyQuiz?.duration_seconds ? `${Math.round(dailyQuiz.duration_seconds / 60)} MIN` : '30 MIN'}
               </span>
             </div>
-            <h2>{dailyQuiz ? (lang === 'si' && dailyQuiz.title_si ? dailyQuiz.title_si : dailyQuiz.title_en) : 'Daily Challenge'}</h2>
+            <h2>{dailyQuiz ? <BilingualText en={dailyQuiz.title_en} si={dailyQuiz.title_si} /> : t(lang, 'daily')}</h2>
             <p>
-              {dailyQuiz?.description_en || 'A fresh astronomy challenge to keep your knowledge sharp. Start any time while today\'s session is open.'}
+              {dailyQuiz ? <BilingualText en={dailyQuiz.description_en} si={dailyQuiz.description_si} /> : ui(lang, 'A fresh astronomy challenge to keep your knowledge sharp. Start any time while today\'s session is open.', 'ඔබේ දැනුම තියුණු කර ගැනීමට නව තාරකා විද්‍යා අභියෝගයකි. අද සැසිය විවෘතව ඇති විට ආරම්භ කරන්න.')}
             </p>
             <div className="feature-facts">
               <span>
-                <BookOpen size={16} /> Official questions
+                <BookOpen size={16} /> {t(lang, 'officialQuestions')}
               </span>
               <span>
                 <Clock3 size={16} /> {dailyQuiz?.duration_seconds ? `${Math.round(dailyQuiz.duration_seconds / 60)} min timer` : '30 min timer'}
@@ -543,11 +538,11 @@ export function Quizzes({ lang = 'en' }: { lang?: Language }) {
                 className="primary-button"
                 onClick={() => setActiveQuiz(dailyQuiz)}
               >
-                Start daily quiz <ArrowUpRight size={17} />
+                {t(lang, 'startDaily')} <ArrowUpRight size={17} />
               </button>
             ) : (
               <button className="primary-button" disabled style={{ opacity: 0.6, cursor: 'not-allowed' }}>
-                Daily Quiz Not Available
+                {t(lang, 'dailyNotAvailable')}
               </button>
             )}
           </div>
@@ -561,22 +556,22 @@ export function Quizzes({ lang = 'en' }: { lang?: Language }) {
           <div className="quiz-feature-body">
             <div className="challenge-tags">
               <span className={`tag ${weekendQuiz ? 'tag-gold' : 'tag-muted'}`}>
-                {weekendOpen ? 'OPEN NOW' : weekendQuiz ? 'UPCOMING' : 'CLOSED'}
+                {weekendOpen ? t(lang, 'openNow') : weekendQuiz ? t(lang, 'upcoming') : t(lang, 'closed')}
               </span>
               <span className="tag tag-violet">
                 {weekendQuiz?.duration_seconds ? `${Math.round(weekendQuiz.duration_seconds / 60)} MIN` : '90 MIN'}
               </span>
             </div>
-            <h2>{weekendQuiz ? (lang === 'si' && weekendQuiz.title_si ? weekendQuiz.title_si : weekendQuiz.title_en) : 'Weekend Olympiad'}</h2>
+            <h2>{weekendQuiz ? <BilingualText en={weekendQuiz.title_en} si={weekendQuiz.title_si} /> : t(lang, 'weekend')}</h2>
             <p>
-              {weekendQuiz?.description_en || 'The main event. Compete in a shared scheduled window and earn triple leaderboard weighting.'}
+              {weekendQuiz ? <BilingualText en={weekendQuiz.description_en} si={weekendQuiz.description_si} /> : ui(lang, 'The main event. Compete in a shared scheduled window and earn triple leaderboard weighting.', 'ප්‍රධාන තරගයයි. නියමිත සැසිය තුළ තරග කර තුන් ගුණයක ලකුණු ලබා ගන්න.')}
             </p>
             <div className="feature-facts">
               <span>
-                <BookOpen size={16} /> Contest set
+                <BookOpen size={16} /> {t(lang, 'contestSet')}
               </span>
               <span>
-                <Clock3 size={16} /> {weekendOpen ? '90 min timer' : `Starts in ${sessionCountdown(weekendQuiz?.active_session, now)}`}
+                <Clock3 size={16} /> {weekendOpen ? `90 min ${t(lang, 'timer')}` : `${t(lang, 'startsIn')} ${sessionCountdown(weekendQuiz?.active_session, now)}`}
               </span>
             </div>
             {weekendQuiz ? (
@@ -586,11 +581,11 @@ export function Quizzes({ lang = 'en' }: { lang?: Language }) {
                 onClick={() => weekendOpen && setActiveQuiz(weekendQuiz)}
                 style={!weekendOpen ? { opacity: 0.6, cursor: 'not-allowed' } : undefined}
               >
-                {weekendOpen ? 'Start Olympiad contest' : `Starts in ${sessionCountdown(weekendQuiz.active_session, now)}`} <ArrowUpRight size={17} />
+                {weekendOpen ? t(lang, 'startOlympiad') : `${t(lang, 'startsIn')} ${sessionCountdown(weekendQuiz.active_session, now)}`} <ArrowUpRight size={17} />
               </button>
             ) : (
               <button className="secondary-button" disabled style={{ opacity: 0.6, cursor: 'not-allowed' }}>
-                No active weekend contest
+                {t(lang, 'noWeekend')}
               </button>
             )}
           </div>
@@ -598,36 +593,43 @@ export function Quizzes({ lang = 'en' }: { lang?: Language }) {
       </div>
       <div className="panel rules-panel">
         <h3>
-          <Sparkles size={18} /> How scoring works
+          <Sparkles size={18} /> {t(lang, 'howScoring')}
         </h3>
         <div className="rules-grid">
           <div>
             <b>01</b>
-            <strong>Every attempt is saved</strong>
+            <strong>{t(lang, 'everyAttemptSaved')}</strong>
             <p>
               Build your progress through all valid attempts, including retries.
             </p>
           </div>
           <div>
             <b>02</b>
-            <strong>First eligible attempt counts</strong>
+            <strong>{t(lang, 'firstAttemptCounts')}</strong>
             <p>
               Only the first eligible daily or weekend submission awards points.
             </p>
           </div>
           <div>
             <b>03</b>
-            <strong>Practice is for learning</strong>
+            <strong>{t(lang, 'practiceLearning')}</strong>
             <p>
-              Practice sets are unlimited and never affect official rankings.
+              {ui(lang, 'Practice sets are unlimited and never affect official rankings.', 'පුහුණු කට්ටල සීමා රහිත අතර නිල ශ්‍රේණිගත කිරීම්වලට බලපාන්නේ නැත.')}
             </p>
           </div>
         </div>
       </div>
+      {reviewAttemptId && (
+        <AttemptReviewModal
+          attemptId={reviewAttemptId}
+          lang={lang}
+          onClose={() => setReviewAttemptId(null)}
+        />
+      )}
     </>
   );
 }
-export function Leaderboard() {
+export function Leaderboard({ lang = 'en' }: { lang?: Language }) {
   const [timeframe, setTimeframe] = useState<'all' | 'weekly'>('all');
   const [entries, setEntries] = useState<LeaderboardItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -653,64 +655,64 @@ export function Leaderboard() {
   return (
     <>
       <PageTitle
-        eyebrow="CELEBRATE YOUR PROGRESS"
-        title="Leaderboard"
-        subtitle="Friendly competition. Brilliant discoveries. One shared universe."
+        eyebrow={ui(lang, 'CELEBRATE YOUR PROGRESS', 'ඔබේ ප්‍රගතිය සමරන්න')}
+        title={t(lang, 'leaderboard')}
+        subtitle={ui(lang, 'Friendly competition. Brilliant discoveries. One shared universe.', 'හිතවත් තරගයක්. විශිෂ්ට සොයාගැනීම්. එකම විශ්වයක්.')}
       />
       <div className="leaderboard-banner">
         <div>
           <Trophy size={29} />
           <div>
             <span>{timeframe === 'all' ? 'ALL-TIME RANKING' : 'WEEKLY RANKING'}</span>
-            <h2>Every point tells a story.</h2>
-            <p>Daily points + weekend points (3× weighted)</p>
+            <h2>{ui(lang, 'Every point tells a story.', 'සෑම ලකුණකටම කතාවක් ඇත.')}</h2>
+            <p>{ui(lang, 'Daily points + weekend points (3× weighted)', 'දෛනික ලකුණු + සති අන්ත ලකුණු (3× බරිත)')}</p>
           </div>
         </div>
         <div className="my-rank">
-          <small>YOUR RANK</small>
+          <small>{ui(lang, 'YOUR RANK', 'ඔබේ ශ්‍රේණිය')}</small>
           <strong>{myRank}</strong>
-          <span>{myPoints} points</span>
+          <span>{myPoints} {t(lang, 'points')}</span>
         </div>
       </div>
       <div className="panel">
         <div className="panel-header">
           <div>
             <div className="eyebrow">ASTROQUIZ COMMUNITY</div>
-            <h3>Top astronomers</h3>
+            <h3>{ui(lang, 'Top astronomers', 'ප්‍රමුඛ තාරකා විද්‍යාඥයින්')}</h3>
           </div>
           <div className="filter-tabs">
             <button
               className={timeframe === 'all' ? 'selected' : ''}
               onClick={() => setTimeframe('all')}
             >
-              All time
+              {ui(lang, 'All time', 'සියලු කාලය')}
             </button>
             <button
               className={timeframe === 'weekly' ? 'selected' : ''}
               onClick={() => setTimeframe('weekly')}
             >
-              This week
+              {ui(lang, 'This week', 'මෙම සතිය')}
             </button>
           </div>
         </div>
         <div className="table-scroll">
           {loading ? (
-            <div style={{ textAlign: 'center', padding: '3rem' }}>Loading leaderboard…</div>
+            <div style={{ textAlign: 'center', padding: '3rem' }}>{ui(lang, 'Loading leaderboard…', 'ලකුණු පුවරුව පූරණය වෙමින්…')}</div>
           ) : (
             <table>
               <thead>
                 <tr>
-                  <th>RANK</th>
-                  <th>STUDENT</th>
-                  <th>POINTS</th>
-                  <th>STATUS</th>
+                  <th>{ui(lang, 'RANK', 'ශ්‍රේණිය')}</th>
+                  <th>{ui(lang, 'STUDENT', 'ශිෂ්‍යයා')}</th>
+                  <th>{t(lang, 'pointsLabel')}</th>
+                  <th>{t(lang, 'status')}</th>
                 </tr>
               </thead>
               <tbody>
                 {entries.length === 0 ? (
                   <tr>
                     <td colSpan={4} style={{ textAlign: 'center', padding: '2rem' }}>
-                      No leaderboard entries yet. Complete a scored quiz to appear here!
+                      {ui(lang, 'No leaderboard entries yet. Complete a scored quiz to appear here!', 'තවමත් ලකුණු පුවරු ඇතුළත් කිරීම් නැත. ලකුණු සහිත ප්‍රශ්නාවලියක් සම්පූර්ණ කරන්න.')}
                     </td>
                   </tr>
                 ) : (
@@ -736,7 +738,7 @@ export function Leaderboard() {
                             <span className="table-icon">{initials}</span>
                             <b>{u.name}</b>
                             {u.is_current_user && (
-                              <span className="tag tag-blue">YOU</span>
+                              <span className="tag tag-blue">{ui(lang, 'YOU', 'ඔබ')}</span>
                             )}
                           </div>
                         </td>
@@ -746,7 +748,7 @@ export function Leaderboard() {
                         </td>
                         <td>
                           <span className="status-dot">
-                            <i /> Active
+                            <i /> {t(lang, 'activeStatus')}
                           </span>
                         </td>
                       </tr>
@@ -758,14 +760,13 @@ export function Leaderboard() {
           )}
         </div>
         <p className="privacy-note">
-          <LockKeyhole size={14} /> Public rankings show display names only.
-          Private account details are never shown.
+          <LockKeyhole size={14} /> {ui(lang, 'Public rankings show display names only. Private account details are never shown.', 'පොදු ශ්‍රේණිගත කිරීම්වල පෙන්වන්නේ ප්‍රදර්ශන නාම පමණි. පෞද්ගලික ගිණුම් තොරතුරු නොපෙන්වයි.')}
         </p>
       </div>
     </>
   );
 }
-export function Attempts() {
+export function Attempts({ lang = 'en' }: { lang?: Language }) {
   const [attempts, setAttempts] = useState<QuizAttempt[]>([]);
   const [loading, setLoading] = useState(true);
   const [reviewAttemptId, setReviewAttemptId] = useState<string | null>(null);
@@ -787,7 +788,7 @@ export function Attempts() {
     return (
       <div className="loading-screen">
         <span className="loading-atom">✦</span>
-        <span>Loading attempt history…</span>
+        <span>{ui(lang, 'Loading attempt history…', 'උත්සාහ ඉතිහාසය පූරණය වෙමින්…')}</span>
       </div>
     );
   }
@@ -795,43 +796,38 @@ export function Attempts() {
   return (
     <>
       <PageTitle
-        eyebrow="LEARN FROM EVERY ANSWER"
-        title="Attempt History"
-        subtitle="Review your past quiz submissions, check correct answers, and understand explanations."
+        eyebrow={ui(lang, 'LEARN FROM EVERY ANSWER', 'සෑම පිළිතුරකින්ම ඉගෙන ගන්න')}
+        title={t(lang, 'attempts')}
+        subtitle={ui(lang, 'Review your past quiz submissions, check correct answers, and understand explanations.', 'ඔබේ පෙර ප්‍රශ්නාවලි යොමු කිරීම් සමාලෝචනය කර නිවැරදි පිළිතුරු සහ පැහැදිලි කිරීම් බලන්න.')}
       />
       <div className="panel">
         <div className="panel-header">
           <div>
-            <div className="eyebrow">SUBMISSION RECORDS</div>
-            <h3>All your quiz attempts</h3>
+            <div className="eyebrow">{ui(lang, 'SUBMISSION RECORDS', 'යොමු කිරීමේ වාර්තා')}</div>
+            <h3>{ui(lang, 'All your quiz attempts', 'ඔබේ සියලු ප්‍රශ්නාවලි උත්සාහ')}</h3>
           </div>
-          <span className="tag tag-blue">{attempts.length} attempts recorded</span>
+          <span className="tag tag-blue">{attempts.length} {ui(lang, 'attempts recorded', 'උත්සාහ සටහන් කර ඇත')}</span>
         </div>
         <div className="table-scroll">
           <table>
             <thead>
               <tr>
-                <th>QUIZ TITLE</th>
-                <th>TYPE</th>
-                <th>DATE</th>
-                <th>SCORE</th>
-                <th>ACCURACY</th>
-                <th>STATUS</th>
-                <th>ACTION</th>
+                  <th>{ui(lang, 'QUIZ TITLE', 'ප්‍රශ්නාවලි නාමය')}</th>
+                  <th>{t(lang, 'type')}</th><th>{t(lang, 'date')}</th><th>{t(lang, 'score')}</th><th>{t(lang, 'accuracy')}</th><th>{t(lang, 'status')}</th><th>{ui(lang, 'ACTION', 'ක්‍රියාව')}</th>
               </tr>
             </thead>
             <tbody>
               {attempts.length === 0 ? (
                 <tr>
                   <td colSpan={7} style={{ textAlign: 'center', padding: '3rem' }}>
-                    No attempts found. Head over to the Quiz Centre and start a challenge!
+                    {t(lang, 'noAttempts')} {t(lang, 'startChallenge')}
                   </td>
                 </tr>
               ) : (
                 attempts.map((a) => {
                   const title = a.quiz
                     ? a.quiz.title_en
-                    : 'Quiz Attempt';
+                    : t(lang, 'quiz');
                   const dateStr = new Date(a.started_at).toLocaleString();
                   return (
                     <tr key={a.id}>
@@ -840,12 +836,12 @@ export function Attempts() {
                           <span className="table-icon">
                             <History size={17} />
                           </span>
-                          <b>{title}</b>
+                          <b>{a.quiz ? <BilingualText en={a.quiz.title_en} si={a.quiz.title_si} /> : title}</b>
                         </div>
                       </td>
                       <td>
                         <span className={`tag tag-${a.quiz?.quiz_type === 'daily' ? 'blue' : a.quiz?.quiz_type === 'weekend' ? 'gold' : 'green'}`}>
-                          {a.quiz?.quiz_type?.toUpperCase() || 'PRACTICE'}
+                          {a.quiz?.quiz_type?.toUpperCase() || t(lang, 'practiceSets').toUpperCase()}
                         </span>
                       </td>
                       <td>{dateStr}</td>
@@ -868,7 +864,7 @@ export function Attempts() {
                           style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem' }}
                           onClick={() => setReviewAttemptId(a.id)}
                         >
-                          Review Answers
+                          {t(lang, 'reviewAnswers')}
                         </button>
                       </td>
                     </tr>
@@ -883,14 +879,14 @@ export function Attempts() {
       {reviewAttemptId && (
         <AttemptReviewModal
           attemptId={reviewAttemptId}
-          lang="en"
+          lang={lang}
           onClose={() => setReviewAttemptId(null)}
         />
       )}
     </>
   );
 }
-export function Practice() {
+export function Practice({ lang = 'en' }: { lang?: Language }) {
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeQuiz, setActiveQuiz] = useState<Quiz | null>(null);
@@ -912,7 +908,7 @@ export function Practice() {
     return (
       <div className="loading-screen">
         <span className="loading-atom">✦</span>
-        <span>Loading practice sets…</span>
+        <span>{ui(lang, 'Loading practice sets…', 'පුහුණු කට්ටල පූරණය වෙමින්…')}</span>
       </div>
     );
   }
@@ -922,7 +918,7 @@ export function Practice() {
       <QuizRunner
         quiz={activeQuiz}
         sessionId={null}
-        lang="en"
+        lang={lang}
         onComplete={() => setActiveQuiz(null)}
         onCancel={() => setActiveQuiz(null)}
       />
@@ -932,15 +928,15 @@ export function Practice() {
   return (
     <>
       <PageTitle
-        eyebrow="SELF-PACED MASTERY"
-        title="Practice Sets"
-        subtitle="Explore specific astronomy topics without time limits or rank pressure."
+        eyebrow={t(lang, 'selfPaced')}
+        title={t(lang, 'practiceSets')}
+        subtitle={t(lang, 'practiceSubtitle')}
       />
       <div className="practice-grid">
         {quizzes.length === 0 ? (
           <div className="notice" style={{ gridColumn: 'span 2' }}>
             <AlertCircle size={18} />
-            <span>No practice sets published yet. Ask a moderator to add practice quizzes in Supabase.</span>
+            <span>{t(lang, 'practicePublishedEmpty')} {t(lang, 'askModerator')}</span>
           </div>
         ) : (
           quizzes.map((pq) => (
@@ -948,17 +944,17 @@ export function Practice() {
               <div className="practice-icon green">
                 <BookOpen size={23} />
               </div>
-              <span className="tag tag-green">PRACTICE SET</span>
-              <h3>{pq.title_en}</h3>
-              <p>{pq.description_en || 'Sharpen your skills at your own pace.'}</p>
+              <span className="tag tag-green">{t(lang, 'practiceSets')}</span>
+              <h3><BilingualText en={pq.title_en} si={pq.title_si} /></h3>
+              <p>{pq.description_en || pq.description_si ? <BilingualText en={pq.description_en} si={pq.description_si} /> : ui(lang, 'Sharpen your skills at your own pace.', 'ඔබේ වේගයෙන් ඔබේ කුසලතා තියුණු කරගන්න.')}</p>
               <div className="practice-bottom">
                 <span>
-                  <BookOpen size={15} /> Unlimited
+                  <BookOpen size={15} /> {t(lang, 'unlimited')}
                 </span>
                 <button
                   className="round-arrow"
                    onClick={() => setActiveQuiz(pq)}
-                  title="Start Practice"
+                  title={ui(lang, 'Start practice', 'පුහුණුව ආරම්භ කරන්න')}
                 >
                   <Play size={16} />
                 </button>
@@ -970,8 +966,7 @@ export function Practice() {
       <div className="notice" style={{ marginTop: '2rem' }}>
         <Sparkles size={18} />
         <span>
-          <b>Practice without pressure.</b> Practice attempts are unlimited,
-          saved in your history, and never affect official leaderboard points.
+          <b>{t(lang, 'practiceWithoutPressure')}</b> {t(lang, 'practiceInfo')}
         </span>
       </div>
     </>
@@ -1013,9 +1008,9 @@ export function SettingsPage({
   return (
     <>
       <PageTitle
-        eyebrow="MAKE IT YOURS"
-        title="Settings"
-        subtitle="Choose how AstroQuiz feels and works for you."
+        eyebrow={t(lang, 'makeYours')}
+        title={t(lang, 'settings')}
+        subtitle={t(lang, 'settingsSubtitle')}
       />
       <div className="settings-layout">
         <section className="panel settings-panel">
@@ -1024,20 +1019,20 @@ export function SettingsPage({
               <Languages />
             </div>
             <div>
-              <h3>Language</h3>
-              <p>Choose your preferred display language.</p>
+              <h3>{t(lang, 'language')}</h3>
+              <p>{t(lang, 'chooseLanguage')}</p>
             </div>
           </div>
           <div className="option-row">
             <div>
-              <b>English</b>
-              <small>English interface and content where available</small>
+              <b>{t(lang, 'english')}</b>
+              <small>{ui(lang, 'English interface and content where available', 'ලබා ගත හැකි තැන්වල English අතුරුමුහුණත සහ අන්තර්ගතය')}</small>
             </div>
             <button
               className={`choice-button ${lang === "en" ? "chosen" : ""}`}
                onClick={() => chooseLanguage("en")}
             >
-              {lang === "en" ? "Selected" : "Choose"}
+              {lang === "en" ? t(lang, 'selected') : t(lang, 'choose')}
             </button>
           </div>
           <div className="option-row">
@@ -1049,7 +1044,7 @@ export function SettingsPage({
               className={`choice-button ${lang === "si" ? "chosen" : ""}`}
                onClick={() => chooseLanguage("si")}
             >
-              {lang === "si" ? "Selected" : "තෝරන්න"}
+              {lang === "si" ? t(lang, 'selected') : t(lang, 'choose')}
             </button>
           </div>
           <div className="settings-heading separated">
@@ -1057,8 +1052,8 @@ export function SettingsPage({
               <Sun />
             </div>
             <div>
-              <h3>Appearance</h3>
-              <p>Make your learning space comfortable.</p>
+              <h3>{t(lang, 'theme')}</h3>
+              <p>{ui(lang, 'Make your learning space comfortable.', 'ඔබේ ඉගෙනුම් අවකාශය සුවපහසු කරගන්න.')}</p>
             </div>
           </div>
           <div className="theme-options">
@@ -1067,20 +1062,20 @@ export function SettingsPage({
                onClick={() => chooseTheme("light")}
             >
               <Sun />
-              <b>Light</b>
-              <small>Clear and bright</small>
+              <b>{t(lang, 'light')}</b>
+              <small>{t(lang, 'clearBright')}</small>
             </button>
             <button
               className={`theme-option ${theme === "dark" ? "chosen" : ""}`}
                onClick={() => chooseTheme("dark")}
             >
               <Moon />
-              <b>Dark</b>
-              <small>Easy on the eyes</small>
+              <b>{t(lang, 'dark')}</b>
+              <small>{t(lang, 'easyEyes')}</small>
             </button>
           </div>
           <p className="settings-footnote">
-             Your display preferences are saved to your Supabase profile.
+             {t(lang, 'savedPreferences')}
           </p>
         </section>
         <section className="panel account-panel">
@@ -1089,8 +1084,8 @@ export function SettingsPage({
               <LockKeyhole />
             </div>
             <div>
-              <h3>Account & privacy</h3>
-              <p>Your information stays protected.</p>
+              <h3>{t(lang, 'accountPrivacy')}</h3>
+              <p>{t(lang, 'protected')}</p>
             </div>
           </div>
           <div className="account-profile">
@@ -1098,34 +1093,28 @@ export function SettingsPage({
             <div>
               <b>{profile?.display_name || 'Profile unavailable'}</b>
               <small>{profile?.role || 'student'} role</small>
-              <span className={`tag ${profile?.is_active ? 'tag-green' : 'tag-muted'}`}>{profile?.is_active ? 'ACTIVE' : 'INACTIVE'}</span>
+              <span className={`tag ${profile?.is_active ? 'tag-green' : 'tag-muted'}`}>{profile?.is_active ? t(lang, 'activeStatus') : t(lang, 'inactiveStatus')}</span>
             </div>
           </div>
           <div className="privacy-item">
             <CircleCheck />
             <span>
-              <b>Role-based access</b>
-              <small>
-                Private attempt details are restricted to your account.
-              </small>
+                  <b>{t(lang, 'roleAccess')}</b>
+                  <small>{ui(lang, 'Private attempt details are restricted to your account.', 'පෞද්ගලික උත්සාහ විස්තර ඔබේ ගිණුමට පමණක් සීමා වේ.')}</small>
             </span>
           </div>
           <div className="privacy-item">
             <CircleCheck />
             <span>
-              <b>Protected answer keys</b>
-              <small>
-                Correct answers should only be revealed after submission.
-              </small>
+                  <b>{t(lang, 'protectedKeys')}</b>
+                  <small>{ui(lang, 'Correct answers are revealed only after submission.', 'නිවැරදි පිළිතුරු පෙන්වන්නේ යොමු කළ පසුව පමණි.')}</small>
             </span>
           </div>
           <div className="privacy-item">
             <CircleCheck />
             <span>
-              <b>Minimal public profile</b>
-              <small>
-                Leaderboards use display names, not email addresses.
-              </small>
+                  <b>{t(lang, 'minimalProfile')}</b>
+                  <small>{ui(lang, 'Leaderboards use display names, not email addresses.', 'ලකුණු පුවරුවේ භාවිතා කරන්නේ විද්‍යුත් තැපෑල නොව ප්‍රදර්ශන නාමයයි.')}</small>
             </span>
           </div>
         </section>
@@ -1133,7 +1122,7 @@ export function SettingsPage({
     </>
   );
 }
-export function Moderator() {
+export function Moderator({ lang = 'en' }: { lang?: Language }) {
   const [showBuilder, setShowBuilder] = useState(false);
   const [editingQuiz, setEditingQuiz] = useState<ModeratorQuiz | null>(null);
   const [moderatorStats, setModeratorStats] = useState({
@@ -1163,40 +1152,40 @@ export function Moderator() {
   return (
     <>
       <PageTitle
-        eyebrow="CONTENT MANAGEMENT"
-        title="Moderator workspace"
-        subtitle="Create, schedule, and manage every quiz from one simple workspace."
+        eyebrow={ui(lang, 'CONTENT MANAGEMENT', 'අන්තර්ගත කළමනාකරණය')}
+        title={ui(lang, 'Moderator workspace', 'මධ්‍යස්ථක වැඩ අවකාශය')}
+        subtitle={ui(lang, 'Create, schedule, and manage every quiz from one simple workspace.', 'එක් සරල වැඩ අවකාශයකින් සියලු ප්‍රශ්නාවලි සාදන්න, කාලසටහන්ගත කරන්න සහ කළමනාකරණය කරන්න.')}
       />
       <div className="notice">
         <LockKeyhole size={18} />
         <span>
-          <b>One simple workflow.</b> Create the quiz, add questions, and choose its schedule in one place.
+          <b>{ui(lang, 'One simple workflow.', 'එක් සරල ක්‍රියාවලියක්.')}</b> {ui(lang, 'Create the quiz, add questions, and choose its schedule in one place.', 'ප්‍රශ්නාවලිය සාදා, ප්‍රශ්න එක් කර, එකම ස්ථානයකින් කාලසටහන තෝරන්න.')}
         </span>
       </div>
       <div className="stats-grid">
         <Stat
           icon={BookOpen}
-          label="Question bank"
+          label={ui(lang, 'Question bank', 'ප්‍රශ්න බැංකුව')}
           value={String(moderatorStats.questionsCount)}
-          detail="Add bilingual questions"
+          detail={ui(lang, 'Add bilingual questions', 'භාෂා දෙකෙන් ප්‍රශ්න එක් කරන්න')}
         />
         <Stat
           icon={CalendarDays}
-          label="Upcoming sessions"
+          label={ui(lang, 'Upcoming sessions', 'ඉදිරි සැසි')}
           value={String(moderatorStats.sessionsCount)}
-          detail="Daily and weekend windows"
+          detail={ui(lang, 'Daily and weekend windows', 'දෛනික සහ සති අන්ත කාල කවුළු')}
         />
         <Stat
           icon={Trophy}
-          label="Published quizzes"
+          label={ui(lang, 'Published quizzes', 'ප්‍රකාශිත ප්‍රශ්නාවලි')}
           value={String(moderatorStats.publishedQuizzesCount)}
-          detail="Daily and weekend"
+          detail={ui(lang, 'Daily and weekend', 'දෛනික සහ සති අන්ත')}
         />
         <Stat
           icon={Users}
-          label="Students"
+          label={ui(lang, 'Students', 'ශිෂ්‍යයින්')}
           value={String(moderatorStats.studentsCount)}
-          detail="Private statistics"
+          detail={ui(lang, 'Private statistics', 'පෞද්ගලික සංඛ්‍යාලේඛන')}
         />
       </div>
       <div className="panel">
@@ -1330,7 +1319,7 @@ export function Admin() {
     </>
   );
 }
-export function Login() {
+export function Login({ lang = 'en' }: { lang?: Language }) {
   return (
     <div className="login-page">
       <div className="login-art">
@@ -1351,25 +1340,24 @@ export function Login() {
           </div>
         </div>
         <div className="login-message">
-          <div className="eyebrow">A UNIVERSE OF KNOWLEDGE</div>
+          <div className="eyebrow">{ui(lang, 'A UNIVERSE OF KNOWLEDGE', 'දැනුමේ විශ්වයක්')}</div>
           <h1>
-            Big questions.
+            {ui(lang, 'Big questions.', 'විශාල ප්‍රශ්න.')}
             <br />
-            <em>Bright futures.</em>
+            <em>{ui(lang, 'Bright futures.', 'දීප්තිමත් අනාගතයක්.')}</em>
           </h1>
           <p>
-            Explore the cosmos, challenge your curiosity, and discover what
-            you're capable of.
+            {ui(lang, "Explore the cosmos, challenge your curiosity, and discover what you're capable of.", 'විශ්වය ගවේෂණය කර, ඔබේ කුතුහලයට අභියෝග කර, ඔබට කළ හැකි දේ සොයාගන්න.')}
           </p>
           <div className="login-points">
             <span>
-              <CircleCheck /> Daily astronomy challenges
+              <CircleCheck /> {ui(lang, 'Daily astronomy challenges', 'දෛනික තාරකා විද්‍යා අභියෝග')}
             </span>
             <span>
-              <CircleCheck /> Friendly student leaderboard
+              <CircleCheck /> {ui(lang, 'Friendly student leaderboard', 'හිතවත් ශිෂ්‍ය ලකුණු පුවරුව')}
             </span>
             <span>
-              <CircleCheck /> Learn at your own pace
+              <CircleCheck /> {ui(lang, 'Learn at your own pace', 'ඔබේ වේගයෙන් ඉගෙන ගන්න')}
             </span>
           </div>
         </div>
@@ -1401,11 +1389,11 @@ export function Login() {
           <div className="form-symbol">
             <Atom size={26} />
           </div>
-          <div className="eyebrow">WELCOME BACK, ASTRONOMER</div>
-          <h2>Sign in to AstroQuiz</h2>
-          <p>Use the account provided by your administrator.</p>
+          <div className="eyebrow">{ui(lang, 'WELCOME BACK, ASTRONOMER', 'නැවත සාදරයෙන් පිළිගනිමු, තාරකා විද්‍යාඥයා')}</div>
+          <h2>{t(lang, 'login')}</h2>
+          <p>{t(lang, 'loginHint')}</p>
           <label>
-            Email address
+            {t(lang, 'email')}
             <input
               name="email"
               type="email"
@@ -1415,7 +1403,7 @@ export function Login() {
             />
           </label>
           <label>
-            Password
+            {t(lang, 'password')}
             <input
               name="password"
               type="password"
@@ -1425,14 +1413,14 @@ export function Login() {
             />
           </label>
           <button className="primary-button submit-button" type="submit">
-            Sign in <ArrowUpRight size={17} />
+            {t(lang, 'signin')} <ArrowUpRight size={17} />
           </button>
           <div className="login-security">
-            <LockKeyhole size={15} /> Secure sign-in · No public registration
+            <LockKeyhole size={15} /> {ui(lang, 'Secure sign-in · No public registration', 'ආරක්ෂිත පිවිසුම · පොදු ලියාපදිංචිය නැත')}
           </div>
           {!isSupabaseConfigured && (
             <div className="demo-notice">
-              Preview mode: configure Supabase to enable real authentication.
+              {ui(lang, 'Preview mode: configure Supabase to enable real authentication.', 'පෙරදසුන් ආකාරය: සැබෑ පිවිසුම සක්‍රිය කිරීමට Supabase සකසන්න.')}
             </div>
           )}
         </form>

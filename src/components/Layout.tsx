@@ -2,7 +2,7 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { Atom, LayoutDashboard, Telescope, Trophy, History, BookOpen, Settings, ShieldCheck, Users, LogOut, Sun, Moon, Languages, Menu, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { t, type Language } from '../lib/i18n';
+import { t, ui, type Language } from '../lib/i18n';
 import { getCurrentProfile, type Profile } from '../lib/api';
 
 type AppRole = Profile['role'];
@@ -54,7 +54,9 @@ export default function Layout({
   }
 
   const displayName = profile?.display_name || 'Astronomer';
-  const roleLabel = profile?.role ? `${profile.role.charAt(0).toUpperCase() + profile.role.slice(1)} account` : 'Student account';
+  const roleLabel = profile?.role
+    ? ui(lang, `${profile.role.charAt(0).toUpperCase() + profile.role.slice(1)} account`, `${profile.role === 'student' ? 'ශිෂ්‍ය' : profile.role === 'moderator' ? 'මධ්‍යස්ථක' : 'පරිපාලක'} ගිණුම`)
+    : ui(lang, 'Student account', 'ශිෂ්‍ය ගිණුම');
   const initials = displayName
     .split(' ')
     .map((w) => w[0])
@@ -78,7 +80,7 @@ export default function Layout({
           </button>
         </div>
 
-        <div className="nav-label">LEARN & COMPETE</div>
+        <div className="nav-label">{t(lang, 'learnCompete')}</div>
         <nav>
           {links.filter((link) => profile && link.roles.includes(profile.role)).map(({ to, key, icon: Icon }) => (
             <NavLink
@@ -97,8 +99,8 @@ export default function Layout({
         <div className="sidebar-bottom">
           <div className="orbit-card">
             <div className="orbit">✦</div>
-            <strong>Explore the universe</strong>
-            <p>Every question brings you closer to the stars.</p>
+            <strong>{ui(lang, 'Explore the universe', 'විශ්වය ගවේෂණය කරන්න')}</strong>
+            <p>{ui(lang, 'Every question brings you closer to the stars.', 'සෑම ප්‍රශ්නයක්ම ඔබව තරු වෙත සමීප කරයි.')}</p>
           </div>
           <button className="nav-link logout" onClick={logout}>
             <LogOut size={18} />
@@ -123,12 +125,12 @@ export default function Layout({
           <div className="breadcrumb">
             <span>AstroQuiz</span>
             <span className="crumb-sep">/</span>
-            <b>Learning space</b>
+            <b>{t(lang, 'learningSpace')}</b>
           </div>
           <div className="top-actions">
             <button
               className="icon-button"
-              title="Toggle theme"
+              title={t(lang, 'toggleTheme')}
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             >
               {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
@@ -138,7 +140,7 @@ export default function Layout({
               onClick={() => setLang(lang === 'en' ? 'si' : 'en')}
             >
               <Languages size={17} />
-              {lang === 'en' ? 'EN' : 'සිං'}
+              {lang === 'en' ? 'සිංහල' : 'EN'}
             </button>
             <div className="top-avatar" title={displayName}>
               {initials}

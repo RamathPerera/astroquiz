@@ -146,8 +146,9 @@ export interface ModeratorStats {
 
 export interface QuizDraftQuestion {
   id?: string;
+  prompt_en?: string;
   prompt_si: string;
-  options: { label: string; text_si: string; is_correct: boolean }[];
+  options: { label: string; text_en?: string; text_si: string; is_correct: boolean }[];
 }
 
 export interface ModeratorQuestion extends QuizDraftQuestion {
@@ -841,7 +842,7 @@ export async function getModeratorQuizzes(): Promise<ModeratorQuiz[]> {
   ]);
   const questionIds = [...new Set(((links || []) as any[]).map((link) => link.question_id))];
   const { data: questions } = questionIds.length
-    ? await supabase.from("questions").select("id,prompt_si,question_options(id,label,text_si,is_correct,question_position)").in("id", questionIds)
+    ? await supabase.from("questions").select("id,prompt_en,prompt_si,question_options(id,label,text_en,text_si,is_correct,question_position)").in("id", questionIds)
     : { data: [] };
   const questionMap = new Map((questions || []).map((question: any) => [question.id, question]));
 
@@ -861,10 +862,11 @@ export async function getModeratorQuizzes(): Promise<ModeratorQuiz[]> {
         const question = questionMap.get(link.question_id);
         return {
           id: link.question_id,
+          prompt_en: question?.prompt_en || "",
           prompt_si: question?.prompt_si || "",
           options: [...(question?.question_options || [])]
             .sort((a, b) => a.question_position - b.question_position)
-            .map((option) => ({ label: option.label, text_si: option.text_si, is_correct: option.is_correct })),
+            .map((option) => ({ label: option.label, text_en: option.text_en, text_si: option.text_si, is_correct: option.is_correct })),
         };
       }),
     };
@@ -950,7 +952,7 @@ export async function createQuizWithQuestions(input: {
       const { data: createdQuestion, error: questionError } = await supabase.from("questions").insert({
         topic: "Astronomy",
         difficulty: "medium",
-        prompt_en: question.prompt_si,
+        prompt_en: question.prompt_en?.trim() || question.prompt_si,
         prompt_si: question.prompt_si,
         explanation_en: "",
         explanation_si: "",
@@ -960,7 +962,7 @@ export async function createQuizWithQuestions(input: {
       const { error: optionsError } = await supabase.from("question_options").insert(question.options.map((option, optionIndex) => ({
         question_id: createdQuestion.id,
         label: option.label,
-        text_en: option.text_si,
+        text_en: option.text_en?.trim() || option.text_si,
         text_si: option.text_si,
         is_correct: option.is_correct,
         question_position: optionIndex + 1,
@@ -1102,7 +1104,7 @@ export async function updateQuizFull(input: {
     const existingLink = questionId ? existingLinkMap.get(questionId) : null;
     if (!existingLink) {
       const { data: createdQuestion, error: questionError } = await supabase.from("questions").insert({
-        topic: "Astronomy", difficulty: "medium", prompt_en: question.prompt_si, prompt_si: question.prompt_si, explanation_en: "", explanation_si: "",
+        topic: "Astronomy", difficulty: "medium", prompt_en: question.prompt_en?.trim() || question.prompt_si, prompt_si: question.prompt_si, explanation_en: "", explanation_si: "",
       }).select("id").single();
       if (questionError || !createdQuestion) return { error: questionError?.message || "Could not create question." };
       questionId = createdQuestion.id;
@@ -1112,14 +1114,14 @@ export async function updateQuizFull(input: {
       const { count: linkCount } = await supabase.from("quiz_questions").select("id", { count: "exact", head: true }).eq("question_id", questionId);
       if ((linkCount || 0) > 1) {
         const { data: clonedQuestion, error: cloneError } = await supabase.from("questions").insert({
-          topic: "Astronomy", difficulty: "medium", prompt_en: question.prompt_si, prompt_si: question.prompt_si, explanation_en: "", explanation_si: "",
+          topic: "Astronomy", difficulty: "medium", prompt_en: question.prompt_en?.trim() || question.prompt_si, prompt_si: question.prompt_si, explanation_en: "", explanation_si: "",
         }).select("id").single();
         if (cloneError || !clonedQuestion) return { error: cloneError?.message || "Could not copy question." };
         questionId = clonedQuestion.id;
         const { error: relinkError } = await supabase.from("quiz_questions").update({ question_id: questionId, question_position: index + 1 }).eq("id", existingLink.id);
         if (relinkError) return { error: relinkError.message };
       } else {
-        const { error: questionError } = await supabase.from("questions").update({ prompt_en: question.prompt_si, prompt_si: question.prompt_si }).eq("id", questionId);
+        const { error: questionError } = await supabase.from("questions").update({ prompt_en: question.prompt_en?.trim() || question.prompt_si, prompt_si: question.prompt_si }).eq("id", questionId);
         if (questionError) return { error: questionError.message };
         const { error: linkError } = await supabase.from("quiz_questions").update({ question_position: index + 1 }).eq("id", existingLink.id);
         if (linkError) return { error: linkError.message };
@@ -1127,7 +1129,7 @@ export async function updateQuizFull(input: {
     }
     await supabase.from("question_options").delete().eq("question_id", questionId);
     const { error: optionsError } = await supabase.from("question_options").insert(question.options.map((option, optionIndex) => ({
-      question_id: questionId, label: option.label, text_en: option.text_si, text_si: option.text_si, is_correct: option.is_correct, question_position: optionIndex + 1,
+      question_id: questionId, label: option.label, text_en: option.text_en?.trim() || option.text_si, text_si: option.text_si, is_correct: option.is_correct, question_position: optionIndex + 1,
     })));
     if (optionsError) return { error: optionsError.message };
   }
