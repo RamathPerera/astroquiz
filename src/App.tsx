@@ -211,7 +211,7 @@ export default function App() {
         element={
           signedIn
             ? <Navigate to={roleHome} replace />
-            : <Login />
+            : <Login lang={lang} />
         }
       />
 
@@ -247,7 +247,7 @@ export default function App() {
           path="/quizzes"
           element={
             <RequireRole allowed={['student']}>
-              <Quizzes />
+              <Quizzes lang={lang} />
             </RequireRole>
           }
         />
@@ -256,7 +256,7 @@ export default function App() {
           path="/leaderboard"
           element={
             <RequireRole allowed={['student', 'moderator', 'admin']}>
-              <Leaderboard />
+              <Leaderboard lang={lang} />
             </RequireRole>
           }
         />
@@ -265,7 +265,7 @@ export default function App() {
           path="/attempts"
           element={
             <RequireRole allowed={['student']}>
-              <Attempts />
+              <Attempts lang={lang} />
             </RequireRole>
           }
         />
@@ -274,7 +274,7 @@ export default function App() {
           path="/practice"
           element={
             <RequireRole allowed={['student']}>
-              <Practice />
+              <Practice lang={lang} />
             </RequireRole>
           }
         />
@@ -297,7 +297,7 @@ export default function App() {
           path="/moderator/*"
           element={
             <RequireRole allowed={['moderator', 'admin']}>
-              <Moderator />
+              <Moderator lang={lang} />
             </RequireRole>
           }
         />

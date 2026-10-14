@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { X, CheckCircle, XCircle, Award, Sparkles, BookOpen } from 'lucide-react';
 import { getAttemptReview, type AttemptReviewItem } from '../lib/api';
 import type { Language } from '../lib/i18n';
+import { t, ui } from '../lib/i18n';
+import BilingualText from './BilingualText';
 
 interface Props {
   attemptId: string;
@@ -24,7 +26,7 @@ export default function AttemptReviewModal({ attemptId, lang, onClose }: Props) 
       })
       .catch((err) => {
         if (!alive) return;
-        setError(err.message || 'Failed to load review');
+        setError(err.message || ui(lang, 'Failed to load review.', 'සමාලෝචනය පූරණය කළ නොහැක.'));
         setLoading(false);
       });
 
@@ -44,8 +46,8 @@ export default function AttemptReviewModal({ attemptId, lang, onClose }: Props) 
       <div className="modal-content review-modal">
         <div className="modal-header">
           <div>
-            <div className="eyebrow">ATTEMPT REVIEW</div>
-            <h2>Question Breakdown</h2>
+            <div className="eyebrow">{t(lang, 'attemptReview')}</div>
+            <h2>{t(lang, 'questionBreakdown')}</h2>
           </div>
           <button className="icon-button" onClick={onClose}>
             <X size={20} />
@@ -55,7 +57,7 @@ export default function AttemptReviewModal({ attemptId, lang, onClose }: Props) 
         {loading ? (
           <div className="modal-loading">
             <span className="loading-atom">✦</span>
-            <p>Loading questions and explanations…</p>
+            <p>{t(lang, 'loadingReview')}</p>
           </div>
         ) : error ? (
           <div className="notice warning">
@@ -64,35 +66,30 @@ export default function AttemptReviewModal({ attemptId, lang, onClose }: Props) 
         ) : reviewItems.length === 0 ? (
           <div className="empty-state">
             <BookOpen size={32} />
-            <p>No questions found for this attempt.</p>
+            <p>{t(lang, 'noQuestions')}</p>
           </div>
         ) : (
           <>
             <div className="review-summary-banner">
               <div className="summary-pill">
                 <CheckCircle size={17} />
-                <span>Correct: <b>{correctCount} / {reviewItems.length}</b></span>
+                <span>{t(lang, 'correct')}: <b>{correctCount} / {reviewItems.length}</b></span>
               </div>
               <div className="summary-pill">
                 <Award size={17} />
-                <span>Score: <b>{totalAwarded.toFixed(1)} pts</b></span>
+                <span>{t(lang, 'score')}: <b>{totalAwarded.toFixed(1)} pts</b></span>
               </div>
             </div>
 
             <div className="review-list">
               {reviewItems.map((item, index) => {
-                const prompt = lang === 'si' && item.prompt_si ? item.prompt_si : item.prompt_en;
-                const userText = lang === 'si' && item.selected_text_si ? item.selected_text_si : item.selected_text_en;
-                const correctText = lang === 'si' && item.correct_text_si ? item.correct_text_si : item.correct_text_en;
-                const explanation = lang === 'si' && item.explanation_si ? item.explanation_si : item.explanation_en;
-
                 return (
                   <div
                     key={item.quiz_question_id || index}
                     className={`review-card ${item.is_correct ? 'correct-card' : 'incorrect-card'}`}
                   >
                     <div className="review-card-top">
-                      <span className="question-num-tag">Question {item.question_position || index + 1}</span>
+                      <span className="question-num-tag">{t(lang, 'question')} {item.question_position || index + 1}</span>
                       <span className="tag tag-muted">{item.topic}</span>
                       <span className="tag tag-blue">{item.difficulty}</span>
                       <span className={`marks-pill ${item.is_correct ? 'positive' : 'negative'}`}>
@@ -100,35 +97,35 @@ export default function AttemptReviewModal({ attemptId, lang, onClose }: Props) 
                       </span>
                     </div>
 
-                    <h4 className="question-prompt">{prompt}</h4>
+                    <h4 className="question-prompt"><BilingualText en={item.prompt_en} si={item.prompt_si} /></h4>
 
                     <div className="answers-comparison">
                       <div className={`answer-box ${item.is_correct ? 'correct' : 'incorrect'}`}>
                         <div className="answer-label">
                           {item.is_correct ? <CheckCircle size={15} /> : <XCircle size={15} />}
-                          <span>Your Answer:</span>
+                          <span>{t(lang, 'yourAnswer')}:</span>
                         </div>
-                        <p>{item.selected_label ? <b>{item.selected_label}. </b> : null}{userText || <em>Not answered</em>}</p>
+                        <p>{item.selected_label ? <b>{item.selected_label}. </b> : null}{item.selected_text_en || item.selected_text_si ? <BilingualText en={item.selected_text_en} si={item.selected_text_si} /> : <em>{t(lang, 'notAnswered')}</em>}</p>
                       </div>
 
                       {!item.is_correct && (
                         <div className="answer-box correct">
                           <div className="answer-label">
                             <CheckCircle size={15} />
-                            <span>Correct Answer:</span>
+                            <span>{t(lang, 'correctAnswer')}:</span>
                           </div>
-                          <p><b>{item.correct_label}. </b>{correctText}</p>
+                          <p><b>{item.correct_label}. </b><BilingualText en={item.correct_text_en} si={item.correct_text_si} /></p>
                         </div>
                       )}
                     </div>
 
-                    {explanation && (
+                    {(item.explanation_en || item.explanation_si) && (
                       <div className="explanation-box">
                         <div className="explanation-title">
                           <Sparkles size={14} />
-                          <span>Explanation</span>
+                          <span>{t(lang, 'explanation')}</span>
                         </div>
-                        <p>{explanation}</p>
+                        <p><BilingualText en={item.explanation_en} si={item.explanation_si} /></p>
                       </div>
                     )}
                   </div>
@@ -139,7 +136,7 @@ export default function AttemptReviewModal({ attemptId, lang, onClose }: Props) 
         )}
 
         <div className="modal-footer">
-          <button className="primary-button" onClick={onClose}>Close Review</button>
+          <button className="primary-button" onClick={onClose}>{t(lang, 'closeReview')}</button>
         </div>
       </div>
     </div>

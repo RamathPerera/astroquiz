@@ -10,8 +10,9 @@ interface BuilderProps {
 }
 
 const blankQuestion = (): QuizDraftQuestion => ({
+  prompt_en: "",
   prompt_si: "",
-  options: ["A", "B", "C", "D"].map((label) => ({ label, text_si: "", is_correct: label === "A" })),
+  options: ["A", "B", "C", "D"].map((label) => ({ label, text_en: "", text_si: "", is_correct: label === "A" })),
 });
 
 export function QuizBuilderModal({ onClose, onSuccess }: BuilderProps) {
@@ -31,6 +32,9 @@ export function QuizBuilderModal({ onClose, onSuccess }: BuilderProps) {
       ...current,
       options: current.options.map((option, optionIndex) => optionIndex === index ? { ...option, text_si } : option),
     }));
+  }
+  function updateEnglishOption(index: number, text_en: string) {
+    setDraftQuestion((current) => ({ ...current, options: current.options.map((option, optionIndex) => optionIndex === index ? { ...option, text_en } : option) }));
   }
 
   function setCorrect(index: number) {
@@ -91,7 +95,7 @@ export function QuizBuilderModal({ onClose, onSuccess }: BuilderProps) {
 
         <div className="builder-step"><span>02</span><div><b>Questions</b><small>{questions.length} questions added</small></div></div>
         {questions.map((question, index) => <div className="question-draft-row" key={`${index}-${question.prompt_si}`}><span>{index + 1}</span><b>{question.prompt_si}</b><button className="icon-button danger-button" onClick={() => setQuestions((current) => current.filter((_, questionIndex) => questionIndex !== index))}><Trash2 size={15} /></button></div>)}
-        <div className="question-draft-form"><div className="form-group"><label>Question {questions.length + 1}</label><textarea value={draftQuestion.prompt_si} onChange={(event) => setDraftQuestion((current) => ({ ...current, prompt_si: event.target.value }))} placeholder="ප්‍රශ්නය සිංහලෙන්" /></div>{draftQuestion.options.map((option, index) => <div className="option-input-row" key={option.label}><button type="button" className={`correct-toggle ${option.is_correct ? "chosen" : ""}`} onClick={() => setCorrect(index)} title="Correct answer">{option.is_correct ? <Check size={15} /> : option.label}</button><input value={option.text_si} onChange={(event) => updateOption(index, event.target.value)} placeholder={`පිළිතුර ${option.label}`} /></div>)}<button className="secondary-button add-question-button" onClick={addQuestion}><Plus size={16} /> Add question</button></div>
+        <div className="question-draft-form"><div className="form-group"><label>Question {questions.length + 1} / ප්‍රශ්නය</label><textarea value={draftQuestion.prompt_si} onChange={(event) => setDraftQuestion((current) => ({ ...current, prompt_si: event.target.value }))} placeholder="ප්‍රශ්නය සිංහලෙන් (optional / විකල්ප)" /><textarea value={draftQuestion.prompt_en || ''} onChange={(event) => setDraftQuestion((current) => ({ ...current, prompt_en: event.target.value }))} placeholder="Question in English (optional)" /></div>{draftQuestion.options.map((option, index) => <div className="option-input-row bilingual-option-input" key={option.label}><button type="button" className={`correct-toggle ${option.is_correct ? "chosen" : ""}`} onClick={() => setCorrect(index)} title="Correct answer / නිවැරදි පිළිතුර">{option.is_correct ? <Check size={15} /> : option.label}</button><input value={option.text_si} onChange={(event) => updateOption(index, event.target.value)} placeholder={`පිළිතුර ${option.label}`} /><input value={option.text_en || ''} onChange={(event) => updateEnglishOption(index, event.target.value)} placeholder={`Option ${option.label} (English)`} /></div>)}<button className="secondary-button add-question-button" onClick={addQuestion}><Plus size={16} /> Add question / ප්‍රශ්නය එක් කරන්න</button></div>
         {error && <div className="notice warning">{error}</div>}
         <div className="modal-footer"><button className="secondary-button" onClick={onClose}>Cancel</button><button className="primary-button" onClick={submit} disabled={saving}>{saving ? "Creating..." : "Create quiz"}</button></div>
       </div>
@@ -115,6 +119,9 @@ export function EditQuizModal({ quiz, onClose, onSuccess }: { quiz: ModeratorQui
 
   function updateOption(index: number, text_si: string) {
     setDraftQuestion((current) => ({ ...current, options: current.options.map((option, optionIndex) => optionIndex === index ? { ...option, text_si } : option) }));
+  }
+  function updateEnglishOption(index: number, text_en: string) {
+    setDraftQuestion((current) => ({ ...current, options: current.options.map((option, optionIndex) => optionIndex === index ? { ...option, text_en } : option) }));
   }
   function setCorrect(index: number) {
     setDraftQuestion((current) => ({ ...current, options: current.options.map((option, optionIndex) => ({ ...option, is_correct: optionIndex === index })) }));
